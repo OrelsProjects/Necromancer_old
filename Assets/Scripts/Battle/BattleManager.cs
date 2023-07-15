@@ -82,7 +82,7 @@ namespace Assets.Scripts
             foreach (CharacterName enemy in _enemies)
             {
                 Damageable enemyObject = Instantiate(CharactersManager.Instance.GetPrefab(enemy)).GetComponent<Damageable>();
-                enemyObject.GetComponent<Character>().CharacterType = CharacterType.Enemy;
+                enemyObject.GetComponent<Character>().CharacterType = CharacterType.Zombie;
                 enemyObject.transform.position = _spawnEnemy.position + _randomFactor;
                 enemyObject.transform.localScale = new Vector3(-enemyObject.transform.localScale.x, enemyObject.transform.localScale.y, enemyObject.transform.localScale.z);
                 _spawnedEnemies.Add(enemyObject);

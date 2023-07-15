@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+﻿using System.Collections;
 using UnityEngine;
 
 
@@ -21,11 +21,19 @@ public class Shootable : MonoBehaviour
     [SerializeField]
     private float _damage;
 
+    private float _destroyIfNotHitAfter = 5f;
     private Rigidbody2D _rigidbody2D;
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
+        StartCoroutine(DestroyAfter());
+    }
+
+    private IEnumerator DestroyAfter()
+    {
+        yield return new WaitForSeconds(_destroyIfNotHitAfter);
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -42,11 +50,10 @@ public class Shootable : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Damageable"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Zombie"))
         {
             collision.gameObject.GetComponent<Damageable>().TakeDamage(_damage);
             Destroy(gameObject);
         }
     }
-
 }

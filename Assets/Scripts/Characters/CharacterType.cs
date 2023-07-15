@@ -1,6 +1,7 @@
 ﻿public enum CharacterType
 {
     Hero,
-    Enemy
+    Zombie,
+    Civilian,
 }
 

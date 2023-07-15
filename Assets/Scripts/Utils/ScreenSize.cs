@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 public class ScreenSize
 {
-    public static float GetScreenToWorldHeight
+    public static float ScreenToWorldHeight
     {
         get
         {
@@ -11,7 +11,7 @@ public class ScreenSize
             return height;
         }
     }
-    public static float GetScreenToWorldWidth
+    public static float ScreenToWorldWidth
     {
         get
         {

@@ -12,6 +12,15 @@ public class Attackable : MonoBehaviour
     public float _attackSpeed = 1; // attacks per second
 
     private bool _isAttacking = false;
+    private bool _canAttack = true;
+
+    private void Update()
+    {
+        if (GetComponent<Zombifieable>().IsZombified)
+        {
+            _canAttack = false;
+        }
+    }
 
     public bool Attack(Damageable target)
     {
@@ -33,6 +42,6 @@ public class Attackable : MonoBehaviour
 
     public bool CanAttack()
     {
-        return !_isAttacking;
+        return !_isAttacking && _canAttack;
     }
 }

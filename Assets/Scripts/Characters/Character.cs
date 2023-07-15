@@ -6,9 +6,14 @@ public class Character : MonoBehaviour
     [Header("Stats")]
     [SerializeField]
     private CharacterName _characterName;
-    [SerializeField]
-    private Levels Level;
+
     public CharacterType CharacterType;
+
+    public void Zombify()
+    {
+        // Change the character type to zombie
+        CharacterType = CharacterType.Zombie;
+    }
 
     public CharacterName GetCharacterName()
     {

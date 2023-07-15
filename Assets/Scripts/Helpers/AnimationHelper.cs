@@ -12,7 +12,7 @@ public enum CharacterState
 public class AnimationHelper
 {
 
-    private Animator _animator;
+    private readonly Animator _animator;
 
     public AnimationHelper(Animator animator)
     {
@@ -24,7 +24,7 @@ public class AnimationHelper
     {
         _animator.SetBool("Idle", idle);
         _animator.SetBool("Running", false);
-        _animator.SetBool("Attacking", false);
+        _animator.SetBool("Attack", false);
         _animator.SetBool("Dead", false);
     }
 

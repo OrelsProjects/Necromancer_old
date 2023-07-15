@@ -1,6 +1,4 @@
-﻿using Assets.Scripts;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -35,11 +33,11 @@ public class MovementController : MonoBehaviour
 
     void Update()
     {
-        if (BattleManager.Instance.IsBattleOver())
-        {
-            ResetValues();
-            return;
-        }
+        // if (BattleManager.Instance.IsBattleOver())
+        // {
+        //     ResetValues();
+        //     return;
+        // }
         if (Target != null && Target.IsNotDead() && _damageable.IsNotDead()) // There's a target and its not dead and we're not dead.
         {
             MoveTowardsTarget();
@@ -48,11 +46,15 @@ public class MovementController : MonoBehaviour
         {
             if (_character.CharacterType == CharacterType.Hero)
             {
-                Target = BattleManager.Instance.GetClosestEnemy(transform);
+                Target = BattleManager2.Instance.GetClosestZombie(transform.position);
             }
             else
             {
-                Target = BattleManager.Instance.GetClosestHero(transform);
+                Target = BattleManager2.Instance.GetClosestZombie(transform.position);
+            }
+            if (Target == null)
+            {
+                ResetValues();
             }
         }
     }

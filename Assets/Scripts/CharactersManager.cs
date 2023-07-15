@@ -23,8 +23,9 @@ public class CharactersManager : MonoBehaviour
         // Loop over all CharacterNames enum and set the values of those to null
     }
 
-    public GameObject GetPrefab (CharacterName characterName)
+    public GameObject GetPrefab(CharacterName characterName)
     {
-        return _charactersPrefabs.Find(character => character.GetCharacterName() == characterName).gameObject;
+        var prefab = _charactersPrefabs.Find(character => character.GetCharacterName() == characterName).gameObject;
+        return prefab.gameObject;
     }
 }
