@@ -3,25 +3,40 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class WanderController : MonoBehaviour {
+public class WanderController : MonoBehaviour
+{
 
     private Rigidbody2D _rb;
     private Animator _animator;
 
     private Vector2? _wanderTarget;
+    private bool _canMove = true;
+
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (_wanderTarget == null)
         {
             Wander();
         }
+    }
+
+    public void DisableMovement()
+    {
+        _canMove = false;
+    }
+
+    public void EnableMovement()
+    {
+        _canMove = true;
     }
 
     /// <summary>
@@ -29,6 +44,10 @@ public class WanderController : MonoBehaviour {
     /// </summary>
     private void Wander()
     {
+        if (!_canMove)
+        {
+            return;
+        }
         _wanderTarget = new Vector2(Random.Range(-2, 2), Random.Range(-2, 2));
         _animator.SetBool("Running", true);
         _rb.velocity = (_wanderTarget.Value - (Vector2)transform.position).normalized * 2;

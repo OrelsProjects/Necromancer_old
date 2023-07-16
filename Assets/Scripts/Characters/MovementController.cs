@@ -58,6 +58,7 @@ public class MovementController : MonoBehaviour
             }
         }
     }
+
     private void MoveTowardsTarget()
     {
         try

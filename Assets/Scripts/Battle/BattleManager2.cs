@@ -16,11 +16,17 @@ public class BattleManager2 : MonoBehaviour
     private List<Zombifieable> _zombifieablesAssigned;
     private bool _isRoundActive = false;
 
+    private GameObject _zombiesParent;
+    private GameObject _zombifieablesParent;
+
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            _zombiesParent = new GameObject("Zombies");
+            _zombifieablesParent = new GameObject("Zombifieables");
         }
         else
         {
@@ -40,13 +46,14 @@ public class BattleManager2 : MonoBehaviour
         {
             // Instantiate zombifieable at random position within screen bounds.
             Vector3 randomPosition = new(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight), 0);
-            Zombifieable zombifieable = Instantiate(_civPrefab, randomPosition, Quaternion.identity);
+            Zombifieable zombifieable = Instantiate(_civPrefab, randomPosition, Quaternion.identity, _zombifieablesParent.transform);
             _zombifieables.Add(zombifieable);
         }
     }
 
     public void AddZombie(Zombie zombie)
     {
+        zombie.transform.parent = _zombiesParent.transform;
         _zombies.Add(zombie);
         if (!_isRoundActive)
         {

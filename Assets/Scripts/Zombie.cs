@@ -10,11 +10,9 @@ public class Zombie : MonoBehaviour
     private enum ZombieState
     {
         IDLE,
+        WANDER,
         CHASE,
-        ATTACK,
         ATTACKING,
-        DYING,
-        DEAD
     }
 
     [SerializeField]
@@ -43,33 +41,30 @@ public class Zombie : MonoBehaviour
 
     void Update()
     {
-        if (IsTargetDeceased())
+        if (_damageable.IsDead() || (_state == ZombieState.IDLE && BattleManager2.Instance.IsBattleOver()))
         {
-            _state = ZombieState.IDLE;
+            ResetValues(ZombieState.IDLE);
+            return;
         }
-        if (_damageable.IsDead() && _state != ZombieState.DYING)
+
+        if (_target == null)
         {
-            _state = ZombieState.DYING;
+            _state = ZombieState.WANDER;
         }
 
         switch (_state)
         {
-            case ZombieState.IDLE:
+            case ZombieState.WANDER:
                 SetTarget();
                 break;
             case ZombieState.CHASE:
                 ChaseTarget();
                 break;
-            case ZombieState.ATTACK:
-                StartCoroutine(Attack());
-                break;
-            case ZombieState.DYING:
-                Die();
-                break;
             case ZombieState.ATTACKING:
+                AttackTarget();
                 break;
-            case ZombieState.DEAD:
-                ResetValues();
+            case ZombieState.IDLE: // If we reached here, it means the game is not over yet.
+                ResetValues(ZombieState.WANDER);
                 break;
         }
     }
@@ -87,9 +82,8 @@ public class Zombie : MonoBehaviour
         }
         if (_target == null) // The game is over. Zombies won.
         {
-            _state = ZombieState.DEAD;
+            ResetValues(ZombieState.IDLE);
             _animationHelper.Idle();
-            ResetValues();
             return;
         }
     }
@@ -97,16 +91,36 @@ public class Zombie : MonoBehaviour
     private void ChaseTarget()
     {
         Vector3 direction = _target.transform.position - transform.position;
-        if (direction.magnitude > distanceToStop)
+        if (IsTargetReached()) // Target reached
+        {
+            if (_target.IsZombified)
+            {
+                _state = ZombieState.WANDER;
+                return;
+            }
+            else
+            {
+                ResetValues();
+                _state = ZombieState.ATTACKING;
+            }
+        }
+        else
         {
             _rb.velocity = direction.normalized * 5;
             _animationHelper.Running();
         }
+    }
+
+    private void AttackTarget()
+    {
+        if (IsTargetReached())
+        {
+            StartCoroutine(Attack());
+        }
         else
         {
-            _rb.velocity = Vector3.zero;
+            ResetValues(ZombieState.CHASE);
             _animationHelper.Idle();
-            _state = ZombieState.ATTACK;
         }
     }
 
@@ -114,18 +128,18 @@ public class Zombie : MonoBehaviour
     {
         _state = ZombieState.ATTACKING;
         _animationHelper.Attacking();
+        bool isTargetZombified = _target.Zombify();
         yield return new WaitForSeconds(_timeToZombify);
-        if (GetComponent<Damageable>().IsDead()) yield break;
-        _target.Zombify();
-        _state = ZombieState.IDLE;
+        if (isTargetZombified)
+        {
+            _state = ZombieState.WANDER;
+        }
     }
 
-    private void Die()
+    private bool IsTargetReached()
     {
-        ResetValues();
-        _state = ZombieState.DEAD;
-        _animationHelper.Dead();
-        Destroy(gameObject, 2f);
+        Vector3 direction = _target.transform.position - transform.position;
+        return direction.magnitude < distanceToStop;
     }
 
     private bool IsTargetDeceased()
@@ -133,8 +147,9 @@ public class Zombie : MonoBehaviour
         return _target == null || _target.IsZombified;
     }
 
-    private void ResetValues()
+    private void ResetValues(ZombieState? state = null)
     {
+        if (state != null) _state = state.Value;
         _rb.velocity = Vector2.zero;
     }
 }
